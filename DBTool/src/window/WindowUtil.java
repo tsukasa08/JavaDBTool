@@ -15,7 +15,9 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -36,7 +38,13 @@ public class WindowUtil extends JFrame implements ChangeListener {
 	private JComboBox<String> m_SchemaCombo;
 
 	//DB接続情報保持用
-	Map<String, String> m_SchemaPassMap;
+	private Map<String, String> m_SchemaPassMap;
+
+	//ログ出力用テキストエリア
+	private JTextArea m_Logarea;
+
+	//従業員番号入力用テキストフィールド
+	JTextField m_Te_EmpNo;
 
 
 	//コンストラクタ
@@ -88,9 +96,9 @@ public class WindowUtil extends JFrame implements ChangeListener {
 		ExporttabPanel.add(La_EmpNo);
 
 		//テキストフィールドの作成
-		JTextField Te_EmpNo = new JTextField(10);
-		Te_EmpNo.setBounds(100, 73, 200, 20);
-		ExporttabPanel.add(Te_EmpNo);
+		m_Te_EmpNo = new JTextField(10);
+		m_Te_EmpNo.setBounds(100, 73, 200, 20);
+		ExporttabPanel.add(m_Te_EmpNo);
 
 		//ボタンの作成
 		JButton BnExport = new JButton("エクスポート");
@@ -106,14 +114,20 @@ public class WindowUtil extends JFrame implements ChangeListener {
 					String StrPass = m_SchemaPassMap.get(StrSchema);
 
 					//DB接続
+					m_Logarea.append("DB接続中…\r\n");
 					Conn conn = new Conn();
 
 					if(!conn.ConnectDB(StrSchema, StrPass)) {
-						System.out.println("DB接続に失敗しました。");
+						m_Logarea.append("DB接続に失敗しました。\r\n");
 					}else {
-						System.out.println("DB接続に成功しました。");
-						System.out.println("スキーマ：" + StrSchema);
+						m_Logarea.append("DB接続に成功しました。\r\n");
+						m_Logarea.append("スキーマ：" + StrSchema + "\r\n");
 					}
+
+					//テキストフィールドの値取得
+					//TODO 複数の従業員番号入力可能対応
+					String EmpNo = m_Te_EmpNo.getText();
+					m_Logarea.append("従業員番号：" + EmpNo + "をエクスポートします。\r\n");
 
 
 				}catch(IOException ioe) {
@@ -130,6 +144,17 @@ public class WindowUtil extends JFrame implements ChangeListener {
 		//ボタンの追加
 		ExporttabPanel.add(BnExport);
 
+		//ラベル追加
+		JLabel La_Log = new JLabel("実行ログ：");
+		La_Log.setBounds(40, 110, 80, 60);
+		ExporttabPanel.add(La_Log);
+
+		//ログ出力用テキストエリア作成
+		m_Logarea = new JTextArea();
+		m_Logarea.setLineWrap(true);
+		JScrollPane scrollpane = new JScrollPane(m_Logarea);
+		scrollpane.setBounds(40, 150, 450, 300);
+		ExporttabPanel.add(scrollpane);
 
 
 		//タブの追加
@@ -146,9 +171,15 @@ public class WindowUtil extends JFrame implements ChangeListener {
 		setVisible(true);
 	}
 
+
+	 //ゲッター（テキストエリアのインスタンス）
+	 public JTextArea GetTextArea() {
+		 return m_Logarea;
+	 }
+
 	 //抽象メソッドの定義
 	 public void stateChanged(ChangeEvent e) {
-//			JTabbedPane t = (JTabbedPane)e.getSource();
+//			JTabbedPane t = (JTabbedPane )e.getSource();
 //			if (t.getSelectedComponent() == m_textarea1) {
 //				System.out.println("m_textarea1");
 //			} else if(t.getSelectedComponent() == m_textarea2){
