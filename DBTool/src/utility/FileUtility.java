@@ -32,6 +32,12 @@ public class FileUtility {
 	//ファイル読み込み
 	public Boolean ReadDBInfoFile() throws FileNotFoundException, IOException{
 
+		//ファイル存在チェック
+		if(!CheckEnvironment.IsFileExist(FilePass + FileName)) {
+			MyException.CreateDialog("下記ファイルが存在しません\r\n" + FileName);
+			return false;
+		}
+
 		File file = new File(FilePass + FileName);
 
 		BufferedReader br = null;
@@ -50,7 +56,9 @@ public class FileUtility {
 			ConnectDBInfo = Arrays.asList(str.split(","));
 
 		}finally {
-			br.close();
+			if(br != null) {
+				br.close();
+			}
 		}
 
 		return true;
@@ -59,6 +67,12 @@ public class FileUtility {
 
 	//スキーマ設定csvファイル読み込み
 	public Map<String, String> ReadCSVFile(String Pass) throws IOException {
+
+		//ファイル存在チェック
+		if(!CheckEnvironment.IsFileExist(Pass)) {
+			MyException.CreateDialog("下記ファイルが存在しません\r\n" + Pass);
+			return null;
+		}
 
 		File csvfile = new File(Pass);
 
@@ -94,8 +108,17 @@ public class FileUtility {
 			return SchemaPassMap;
 
 		}finally {
-			br.close();
+			if(br != null) {
+				br.close();
+			}
 		}
+	}
+
+	//テーブルデータExcelファイル作成
+	//TODO 第二引数のデータ型をテーブルのデータを保持するクラスに変更
+	public void ExportTableData(String Pass, String Data) {
+
+
 	}
 
 

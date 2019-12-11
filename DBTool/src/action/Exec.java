@@ -13,8 +13,11 @@ public class Exec {
 		try {
 			//ウィンドウ作成
 			WindowUtil windowObj = new WindowUtil();
+			if(!windowObj.Initialize()) {
+				return;
+			}
 		}catch(IOException e) {
-			//例外処理きちんと考える
+			//TODO 例外処理きちんと考える
 			e.printStackTrace();
 		}
 

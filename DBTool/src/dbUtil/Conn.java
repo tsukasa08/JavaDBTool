@@ -33,21 +33,21 @@ public class Conn {
 
 	//コンストラクタ
 	public Conn() throws FileNotFoundException, IOException{
+
+	}
+
+	//DB接続関数
+	public Boolean ConnectDB(String user, String password) throws ClassNotFoundException, SQLException, FileNotFoundException, IOException{
+
 		FileUtility fileutilObj = new FileUtility();
 		if(!fileutilObj.ReadDBInfoFile()) {
-			//ファイルが読み込めなかった場合
-
+			return false;
 		}
-
 		ConnectDBInfo = fileutilObj.GetConnectDBInfo();
 
 		servername = ConnectDBInfo.get(0);
 		port = ConnectDBInfo.get(1);
 		sid = ConnectDBInfo.get(2);
-	}
-
-	//DB接続関数
-	public Boolean ConnectDB(String user, String password) throws ClassNotFoundException, SQLException{
 
 		//JBBCドライバクラスのロード
 	    Class.forName("oracle.jdbc.driver.OracleDriver");
